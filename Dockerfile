@@ -2,10 +2,13 @@ FROM python:3.10-alpine
 
 WORKDIR /app
 
-COPY requirements-freeze.txt .
-RUN apk add --no-cache build-base \
-    && pip install --no-cache-dir -r requirements-freeze.txt
+# Встановлюємо компілятори для numpy
+RUN apk add --no-cache gcc musl-dev linux-headers
 
-COPY . .
+COPY requirements-freeze.txt .
+RUN pip install --no-cache-dir -r requirements-freeze.txt
+
+COPY spaceship/ spaceship/
+COPY build/ build/
 
 CMD ["uvicorn", "spaceship.main:app", "--host", "0.0.0.0", "--port", "8080"]
